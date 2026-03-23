@@ -9,6 +9,8 @@ logger.info('Starting server...');
 
 const app = express();
 
+const { global: globalLimit } = require('./middleware/rateLimit');
+app.use(globalLimit);
 app.use(express.json());
 
 // load routes dynamically including subfolders

@@ -2,10 +2,11 @@ const router = require('express').Router();
 const db = require('../../../database');
 const validatePerms = require('../../../middleware/validatePerms');
 const v4 = require('uuid').v4;
+const { admin } = require('../../../middleware/rateLimit');
 
 const logger = require('../../../utils/logger');
 
-router.post('/', validatePerms, async (req, res) => {
+router.post('/', admin, validatePerms, async (req, res) => {
     try {
         const { name, expires_in } = req.body;
         if (!name || !expires_in) {

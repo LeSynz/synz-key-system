@@ -1,8 +1,9 @@
 const router = require('express').Router();
 const db = require('../../../database');
 const validateKey = require('../../../middleware/validateKey');
+const { strict } = require('../../../middleware/rateLimit');
 
-router.post('/', validateKey, async (req, res) => {
+router.post('/', strict, validateKey, async (req, res) => {
     res.json({ success: true, message: 'Key is valid.' });
 })
 

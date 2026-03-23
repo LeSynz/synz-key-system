@@ -1,10 +1,11 @@
 const router = require('express').Router();
 const db = require('../../../database');
 const validatePerms = require('../../../middleware/validatePerms');
+const { admin } = require('../../../middleware/rateLimit');
 
 const logger = require('../../../utils/logger');
 
-router.get('/', validatePerms, async (req, res) => {
+router.get('/', admin, validatePerms, async (req, res) => {
     try {
         const { status, note } = req.query;
 

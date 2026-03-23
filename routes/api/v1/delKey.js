@@ -1,10 +1,11 @@
 const router = require('express').Router();
 const db = require('../../../database');
 const validatePerms = require('../../../middleware/validatePerms');
+const { admin } = require('../../../middleware/rateLimit');
 
 const logger = require('../../../utils/logger');
 
-router.post('/', validatePerms, async (req, res) => {
+router.post('/', admin, validatePerms, async (req, res) => {
     try {
         const { key } = req.body;
         if (!key) {
