@@ -10,6 +10,8 @@ A REST API for managing license keys with HWID (hardware ID) binding, built with
 - **Admin Authentication** — All management endpoints are protected
 - **Key Management** — Extend, delete, reset HWID, and list keys
 - **Dashboard Stats** — Total, active, expired, and redeemed key counts
+- **Rate Limiting** — Global and per-route request throttling
+- **Structured Logging** — Custom logger for consistent output
 
 ## Prerequisites
 
@@ -320,12 +322,15 @@ synz-key-system/
 ├── .env                   # Environment variables (not committed)
 ├── .env.example           # Template for .env
 ├── database/
-│   ├── index.js           # PostgreSQL connection pool
+│   ├── index.js           # SQLite connection & query wrapper
 │   └── migrate.js         # Table creation script
 ├── middleware/
 │   ├── errorHandler.js    # Global error handler
+│   ├── rateLimit.js       # Rate limiting (global, strict, admin)
 │   ├── validateKey.js     # Key + HWID validation middleware
 │   └── validatePerms.js   # Admin auth middleware
+├── utils/
+│   └── logger.js          # Custom logger
 └── routes/
     ├── index.js           # Root route
     └── api/
