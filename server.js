@@ -1,8 +1,11 @@
 const express = require('express');
-const config = require('./config');  
+const config = require('./config');
 const errorHandler = require('./middleware/errorHandler');
 const fs = require('fs');
 const path = require('path');
+
+const logger = require('./utils/logger');
+logger.info('Starting server...');
 
 const app = express();
 
@@ -23,7 +26,7 @@ function loadRoutes(dir, prefix = '') {
             const routePath = prefix + routeName || '/';
             const route = require(fullPath);
             app.use(routePath, route);
-            console.log(`Loaded route: ${routePath}`);
+            logger.info(`Loaded route: ${routePath}`);
         }
     });
 }
@@ -32,5 +35,5 @@ loadRoutes(routesDir);
 app.use(errorHandler);
 
 app.listen(config.port, () => {
-    console.log(`Server is running on port ${config.port}`);
+    logger.info(`Server is running on port ${config.port}`);
 });

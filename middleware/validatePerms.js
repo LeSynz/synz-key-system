@@ -1,6 +1,8 @@
 const db = require('../database');
 const crypto = require('crypto');
 
+const logger = require('../utils/logger');
+
 function hashPassword(password) {
     return crypto.createHash('sha256').update(password).digest('hex');
 }
@@ -27,7 +29,7 @@ module.exports = async (req, res, next) => {
         req.admin = admin;
         next();
     } catch (error) {
-        console.error('Error validating admin:', error);
+        logger.error('Error validating admin:', error);
         res.status(500).json({ success: false, message: 'Failed to validate credentials.' });
     }
 };

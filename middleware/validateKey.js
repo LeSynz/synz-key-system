@@ -1,5 +1,7 @@
 const db = require('../database');
 
+const logger = require('../utils/logger');
+
 module.exports = async (req, res, next) => {
     const apiKey = req.header('x-api-key');
     const hwid = req.header('x-hwid');
@@ -19,6 +21,7 @@ module.exports = async (req, res, next) => {
                 return res.status(400).json({ success: false, message: 'HWID is required on first use.' });
             }
             db.query('UPDATE keys SET hwid = $1, redeemed_at = datetime(\'now\') WHERE id = $2', [hwid, key.id]);
+            logger.success(`HWID for key "${key.key}" updated successfully.`);
             key.hwid = hwid;
         } else if (key.hwid !== hwid) {
             return res.status(403).json({ success: false, message: 'Key is bound to another device.' });
@@ -27,7 +30,7 @@ module.exports = async (req, res, next) => {
         req.apiKey = key;
         next();
     } catch (error) {
-        console.error('Error validating API key:', error);
+        logger.error('Error validating API key:', error);
         res.status(500).json({ success: false, message: 'Failed to validate API key.' });
     }
 }

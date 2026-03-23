@@ -2,6 +2,8 @@ const router = require('express').Router();
 const db = require('../../../database');
 const validatePerms = require('../../../middleware/validatePerms');
 
+const logger = require('../../../utils/logger');
+
 router.get('/', validatePerms, async (req, res) => {
     try {
         const { key } = req.query;
@@ -28,7 +30,7 @@ router.get('/', validatePerms, async (req, res) => {
             },
         });
     } catch (error) {
-        console.error('Error getting key:', error);
+        logger.error('Error getting key:', error);
         res.status(500).json({ success: false, message: 'Failed to get key.' });
     }
 });

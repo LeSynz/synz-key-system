@@ -2,6 +2,8 @@ const router = require('express').Router();
 const db = require('../../../database');
 const validatePerms = require('../../../middleware/validatePerms');
 
+const logger = require('../../../utils/logger');
+
 router.get('/', validatePerms, async (req, res) => {
     try {
         const result = db.query(`
@@ -15,7 +17,7 @@ router.get('/', validatePerms, async (req, res) => {
 
         res.json({ success: true, stats: result.rows[0] });
     } catch (error) {
-        console.error('Error fetching stats:', error);
+        logger.error('Error fetching stats:', error);
         res.status(500).json({ success: false, message: 'Failed to fetch stats.' });
     }
 });

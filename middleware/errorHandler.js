@@ -1,4 +1,6 @@
+const logger = require('../utils/logger');
+
 module.exports = (err, req, res, next) => {
-    console.error(err.stack);
+    logger.error('Unexpected error:', err);
     res.status(500).json({ error: 'An unexpected error occurred.' });
 }

@@ -2,6 +2,8 @@ const router = require('express').Router();
 const db = require('../../../database');
 const validatePerms = require('../../../middleware/validatePerms');
 
+const logger = require('../../../utils/logger');
+
 router.post('/', validatePerms, async (req, res) => {
     try {
         const { key, days } = req.body;
@@ -19,10 +21,11 @@ router.post('/', validatePerms, async (req, res) => {
         const newExpiry = new Date(base.getTime() + days * 24 * 60 * 60 * 1000);
 
         db.query('UPDATE keys SET expires_at = $1 WHERE id = $2', [newExpiry.toISOString(), result.rows[0].id]);
+        logger.success(`Key "${key}" extended successfully.`);
 
         res.json({ success: true, message: 'Key extended successfully.', expires_at: newExpiry });
     } catch (error) {
-        console.error('Error extending key:', error);
+        logger.error('Error extending key:', error);
         res.status(500).json({ success: false, message: 'Failed to extend key.' });
     }
 });

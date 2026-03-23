@@ -2,6 +2,8 @@ const router = require('express').Router();
 const db = require('../../../database');
 const validatePerms = require('../../../middleware/validatePerms');
 
+const logger = require('../../../utils/logger');
+
 router.post('/', validatePerms, async (req, res) => {
     try {
         const { key } = req.body;
@@ -15,9 +17,10 @@ router.post('/', validatePerms, async (req, res) => {
         }
 
         db.query('DELETE FROM keys WHERE id = $1', [result.rows[0].id]);
+        logger.success(`Key "${key}" deleted successfully.`);
         res.json({ success: true, message: 'Key deleted successfully.' });
     } catch (error) {
-        console.error('Error deleting key:', error);
+        logger.error('Error deleting key:', error);
         res.status(500).json({ success: false, message: 'Failed to delete key.' });
     }
 });

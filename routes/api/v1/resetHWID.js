@@ -2,6 +2,8 @@ const router = require('express').Router();
 const db = require('../../../database');
 const validatePerms = require('../../../middleware/validatePerms');
 
+const logger = require('../../../utils/logger');
+
 router.post('/', validatePerms, async (req, res) => {
     try {
         const { key, new_hwid } = req.body;
@@ -16,13 +18,14 @@ router.post('/', validatePerms, async (req, res) => {
 
         if (new_hwid) {
             db.query('UPDATE keys SET hwid = $1 WHERE id = $2', [new_hwid, result.rows[0].id]);
+            logger.success(`HWID for key "${key}" updated successfully.`);
             res.json({ success: true, message: 'HWID updated successfully.' });
         } else {
             db.query('UPDATE keys SET hwid = NULL, redeemed_at = NULL WHERE id = $1', [result.rows[0].id]);
             res.json({ success: true, message: 'HWID reset successfully.' });
         }
     } catch (error) {
-        console.error('Error resetting HWID:', error);
+        logger.error('Error resetting HWID:', error);
         res.status(500).json({ success: false, message: 'Failed to reset HWID.' });
     }
 });

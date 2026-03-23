@@ -1,4 +1,5 @@
 const { db } = require('./index');
+const logger = require('./utils/logger');
 
 try {
     db.exec(`
@@ -25,8 +26,8 @@ try {
         CREATE INDEX IF NOT EXISTS idx_admins_username ON admins (username);
     `);
 
-    console.log('Migration complete — tables ready.');
+    logger.success('Migration complete — tables ready.');
 } catch (err) {
-    console.error('Migration failed:', err);
+    logger.error('Migration failed:', err);
     process.exit(1);
 }

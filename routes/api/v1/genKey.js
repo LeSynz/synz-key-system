@@ -3,6 +3,8 @@ const db = require('../../../database');
 const validatePerms = require('../../../middleware/validatePerms');
 const v4 = require('uuid').v4;
 
+const logger = require('../../../utils/logger');
+
 router.post('/', validatePerms, async (req, res) => {
     try {
         const { name, expires_in } = req.body;
@@ -21,7 +23,7 @@ router.post('/', validatePerms, async (req, res) => {
         }
         res.json({ success: true, key });
     } catch (error) {
-        console.error('Error generating key:', error);
+        logger.error('Error generating key:', error);
         res.status(500).json({ success: false, message: 'Failed to generate key.' });
     }
 })

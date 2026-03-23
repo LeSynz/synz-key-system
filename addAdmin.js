@@ -1,10 +1,13 @@
 const db = require('./database');
 const crypto = require('crypto');
 
+const logger = require('./utils/logger');
+logger.info('Adding new admin...');
+
 const [, , username, password] = process.argv;
 
 if (!username || !password) {
-    console.error('Usage: node addAdmin.js <username> <password>');
+    logger.error('Usage: node addAdmin.js <username> <password>');
     process.exit(1);
 }
 
@@ -14,8 +17,8 @@ try {
         'INSERT INTO admins (username, password_hash) VALUES ($1, $2) ON CONFLICT (username) DO UPDATE SET password_hash = excluded.password_hash',
         [username, hash]
     );
-    console.log(`Admin "${username}" created successfully.`);
+    logger.success(`Admin "${username}" created successfully.`);
 } catch (err) {
-    console.error('Failed to create admin:', err);
+    logger.error('Failed to create admin:', err);
     process.exit(1);
 }

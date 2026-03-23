@@ -2,6 +2,8 @@ const router = require('express').Router();
 const db = require('../../../database');
 const validatePerms = require('../../../middleware/validatePerms');
 
+const logger = require('../../../utils/logger');
+
 router.get('/', validatePerms, async (req, res) => {
     try {
         const { status, note } = req.query;
@@ -32,7 +34,7 @@ router.get('/', validatePerms, async (req, res) => {
         const result = db.query(query, params);
         res.json({ success: true, count: result.rows.length, keys: result.rows });
     } catch (error) {
-        console.error('Error listing keys:', error);
+        logger.error('Error listing keys:', error);
         res.status(500).json({ success: false, message: 'Failed to list keys.' });
     }
 });
