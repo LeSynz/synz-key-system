@@ -7,7 +7,7 @@ module.exports = async (req, res, next) => {
         return res.status(401).json({ success: false, message: 'API key is missing.' });
     }
     try {
-        const result = await db.query('SELECT * FROM keys WHERE key = $1 AND expires_at > NOW()', [apiKey]);
+        const result = db.query('SELECT * FROM keys WHERE key = $1 AND expires_at > datetime(\'now\')', [apiKey]);
         if (result.rows.length === 0) {
             return res.status(401).json({ success: false, message: 'Invalid or expired API key.' });
         }
@@ -18,7 +18,7 @@ module.exports = async (req, res, next) => {
             if (!hwid) {
                 return res.status(400).json({ success: false, message: 'HWID is required on first use.' });
             }
-            await db.query('UPDATE keys SET hwid = $1, redeemed_at = NOW() WHERE id = $2', [hwid, key.id]);
+            db.query('UPDATE keys SET hwid = $1, redeemed_at = datetime(\'now\') WHERE id = $2', [hwid, key.id]);
             key.hwid = hwid;
         } else if (key.hwid !== hwid) {
             return res.status(403).json({ success: false, message: 'Key is bound to another device.' });

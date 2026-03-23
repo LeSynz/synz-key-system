@@ -4,12 +4,12 @@ const validatePerms = require('../../../middleware/validatePerms');
 
 router.get('/', validatePerms, async (req, res) => {
     try {
-        const result = await db.query(`
+        const result = db.query(`
             SELECT
-                COUNT(*)::int AS total,
-                COUNT(*) FILTER (WHERE expires_at > NOW())::int AS active,
-                COUNT(*) FILTER (WHERE expires_at <= NOW())::int AS expired,
-                COUNT(*) FILTER (WHERE redeemed_at IS NOT NULL)::int AS redeemed
+                COUNT(*) AS total,
+                COALESCE(SUM(CASE WHEN expires_at > datetime('now') THEN 1 ELSE 0 END), 0) AS active,
+                COALESCE(SUM(CASE WHEN expires_at <= datetime('now') THEN 1 ELSE 0 END), 0) AS expired,
+                COALESCE(SUM(CASE WHEN redeemed_at IS NOT NULL THEN 1 ELSE 0 END), 0) AS redeemed
             FROM keys
         `);
 

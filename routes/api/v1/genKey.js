@@ -13,11 +13,11 @@ router.post('/', validatePerms, async (req, res) => {
         const expiresAt = new Date(Date.now() + expires_in * 24 * 60 * 60 * 1000);
         const key = 'SYNZ-' + v4().toUpperCase();
 
-        const existing = await db.query('SELECT id FROM keys WHERE note = $1', [name]);
+        const existing = db.query('SELECT id FROM keys WHERE note = $1', [name]);
         if (existing.rows.length > 0) {
-            await db.query('UPDATE keys SET key = $1, expires_at = $2, hwid = NULL, redeemed_at = NULL WHERE id = $3', [key, expiresAt, existing.rows[0].id]);
+            db.query('UPDATE keys SET key = $1, expires_at = $2, hwid = NULL, redeemed_at = NULL WHERE id = $3', [key, expiresAt.toISOString(), existing.rows[0].id]);
         } else {
-            await db.query('INSERT INTO keys (key, expires_at, note) VALUES ($1, $2, $3)', [key, expiresAt, name]);
+            db.query('INSERT INTO keys (key, expires_at, note) VALUES ($1, $2, $3)', [key, expiresAt.toISOString(), name]);
         }
         res.json({ success: true, key });
     } catch (error) {

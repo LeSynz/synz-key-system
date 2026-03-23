@@ -11,16 +11,16 @@ router.get('/', validatePerms, async (req, res) => {
         const params = [];
 
         if (status === 'active') {
-            conditions.push('expires_at > NOW()');
+            conditions.push('expires_at > datetime(\'now\')');
         } else if (status === 'expired') {
-            conditions.push('expires_at <= NOW()');
+            conditions.push('expires_at <= datetime(\'now\')');
         } else if (status === 'redeemed') {
             conditions.push('redeemed_at IS NOT NULL');
         }
 
         if (note) {
             params.push(`%${note}%`);
-            conditions.push(`note ILIKE $${params.length}`);
+            conditions.push(`note LIKE $${params.length}`);
         }
 
         if (conditions.length > 0) {
@@ -29,7 +29,7 @@ router.get('/', validatePerms, async (req, res) => {
 
         query += ' ORDER BY created_at DESC';
 
-        const result = await db.query(query, params);
+        const result = db.query(query, params);
         res.json({ success: true, count: result.rows.length, keys: result.rows });
     } catch (error) {
         console.error('Error listing keys:', error);

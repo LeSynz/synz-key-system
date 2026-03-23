@@ -1,6 +1,6 @@
 # Synz Key System
 
-A REST API for managing license keys with HWID (hardware ID) binding, built with Express.js and PostgreSQL.
+A REST API for managing license keys with HWID (hardware ID) binding, built with Express.js and SQLite.
 
 ## Features
 
@@ -14,7 +14,6 @@ A REST API for managing license keys with HWID (hardware ID) binding, built with
 ## Prerequisites
 
 - [Node.js](https://nodejs.org/) (v18+)
-- [PostgreSQL](https://www.postgresql.org/download/) (v14+)
 
 ## Setup
 
@@ -35,28 +34,21 @@ cp .env.example .env
 ```env
 PORT=3000
 JWT_SECRET=your_secret_here
-DATABASE_URL=postgresql://postgres:your_password@localhost:5432/synz_keys
 ```
 
-### 3. Create the database
-
-```bash
-psql -U postgres -c "CREATE DATABASE synz_keys;"
-```
-
-### 4. Run migrations
+### 3. Run migrations
 
 ```bash
 node database/migrate.js
 ```
 
-### 5. Create an admin user
+### 4. Create an admin user
 
 ```bash
 node addAdmin.js <username> <password>
 ```
 
-### 6. Start the server
+### 5. Start the server
 
 ```bash
 npm start
@@ -70,22 +62,22 @@ The server will run on `http://localhost:3000` (or your configured `PORT`).
 
 | Column       | Type         | Description                        |
 |--------------|--------------|------------------------------------|
-| id           | SERIAL       | Primary key                        |
-| key          | VARCHAR(50)  | Unique license key (`SYNZ-...`)    |
-| hwid         | VARCHAR(255) | Bound hardware ID (null if unbound)|
-| created_at   | TIMESTAMP    | When the key was created           |
-| expires_at   | TIMESTAMP    | When the key expires               |
-| redeemed_at  | TIMESTAMP    | When the key was first used        |
+| id           | INTEGER    | Primary key                        |
+| key          | TEXT       | Unique license key (`SYNZ-...`)    |
+| hwid         | TEXT       | Bound hardware ID (null if unbound)|
+| created_at   | TEXT       | When the key was created           |
+| expires_at   | TEXT       | When the key expires               |
+| redeemed_at  | TEXT       | When the key was first used        |
 | note         | TEXT         | Admin label/note for the key       |
 
 ### `admins`
 
 | Column        | Type         | Description              |
 |---------------|--------------|--------------------------|
-| id            | SERIAL       | Primary key              |
-| username      | VARCHAR(64)  | Unique admin username     |
-| password_hash | VARCHAR(255) | SHA-256 hashed password  |
-| created_at    | TIMESTAMP    | When the admin was created|
+| id            | INTEGER    | Primary key              |
+| username      | TEXT       | Unique admin username     |
+| password_hash | TEXT       | SHA-256 hashed password  |
+| created_at    | TEXT       | When the admin was created|
 
 ## API Reference
 

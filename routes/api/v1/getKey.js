@@ -9,7 +9,7 @@ router.get('/', validatePerms, async (req, res) => {
             return res.status(400).json({ success: false, message: 'Key query parameter is required.' });
         }
 
-        const result = await db.query(
+        const result = db.query(
             'SELECT id, key, hwid, note, created_at, expires_at, redeemed_at FROM keys WHERE key = $1',
             [key]
         );
